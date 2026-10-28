@@ -1,0 +1,695 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CPU Scheduling Research Simulator</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f1f5f9;
+    color: #1e293b;
+    line-height: 1.6;
+}
+
+header {
+    background: #14213d;
+    color: white;
+    padding: 25px 8%;
+}
+
+header h1 {
+    font-size: 27px;
+}
+
+header p {
+    color: #cbd5e1;
+    margin-top: 8px;
+}
+
+nav {
+    background: #1e3a5f;
+    padding: 13px 8%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 22px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav a:hover {
+    color: #93c5fd;
+}
+
+.container {
+    width: 90%;
+    max-width: 1100px;
+    margin: 25px auto;
+}
+
+.card {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    margin-bottom: 22px;
+    box-shadow: 0 3px 12px #0000000d;
+}
+
+h2 {
+    color: #1d4ed8;
+    margin-bottom: 12px;
+}
+
+h3 {
+    margin: 16px 0 8px;
+}
+
+p {
+    margin-bottom: 10px;
+}
+
+input, select, button {
+    padding: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+input {
+    width: 100%;
+    margin-top: 5px;
+}
+
+label {
+    display: block;
+    margin-bottom: 12px;
+    font-weight: bold;
+}
+
+button {
+    background: #2563eb;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 5px 5px 5px 0;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+.secondary {
+    background: #475569;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 14px;
+}
+
+th, td {
+    padding: 11px;
+    text-align: center;
+    border: 1px solid #dbe3ee;
+}
+
+th {
+    background: #e8efff;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+.metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 14px;
+    margin-top: 18px;
+}
+
+.metric {
+    background: #eff6ff;
+    border-left: 4px solid #2563eb;
+    padding: 16px;
+    border-radius: 8px;
+}
+
+.metric strong {
+    display: block;
+    font-size: 23px;
+    color: #1d4ed8;
+}
+
+.gantt {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 18px;
+}
+
+.block {
+    background: #2563eb;
+    color: white;
+    min-width: 85px;
+    padding: 12px 8px;
+    text-align: center;
+    border-radius: 6px;
+}
+
+.block span {
+    display: block;
+    font-size: 12px;
+    color: #dbeafe;
+}
+
+.note {
+    background: #fff7ed;
+    border-left: 4px solid #f59e0b;
+    padding: 13px;
+    margin-top: 14px;
+}
+
+footer {
+    text-align: center;
+    background: #14213d;
+    color: white;
+    padding: 20px;
+    margin-top: 35px;
+}
+
+@media(max-width: 600px) {
+    header h1 {
+        font-size: 22px;
+    }
+
+    .container {
+        width: 94%;
+    }
+
+    .card {
+        padding: 16px;
+    }
+
+    th, td {
+        padding: 8px;
+        font-size: 13px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>CPU Process Scheduling Simulator</h1>
+    <p>Research Paper Study: Enhanced Round Robin with Dynamic Time Quantum</p>
+    <p>Operating Systems | SLA Stage 2</p>
+</header>
+
+<nav>
+    <a href="#home">Home</a>
+    <a href="#research">Research Paper</a>
+    <a href="#simulator">Simulator</a>
+    <a href="#results">Results</a>
+    <a href="#comparison">Algorithms</a>
+</nav>
+
+<div class="container">
+
+<section class="card" id="home">
+    <h2>Welcome to the Project</h2>
+    <p>
+        CPU scheduling is an important function of an operating system.
+        It decides which process gets the CPU and for how long.
+    </p>
+    <p>
+        This project demonstrates FCFS, standard Round Robin, and an
+        educational dynamic-time-quantum scheduling approach inspired by
+        the research paper studied in Stage 1.
+    </p>
+</section>
+
+<section class="card" id="research">
+    <h2>Research Paper Overview</h2>
+    <h3>Enhanced Round Robin with Dynamic Time Quantum</h3>
+    <p>
+        Standard Round Robin gives each ready process a fixed time quantum.
+        A very small quantum can cause frequent context switches, while
+        a large quantum can reduce responsiveness.
+    </p>
+    <p>
+        Dynamic-time-quantum scheduling aims to adjust the quantum according
+        to process-related information to balance CPU efficiency and fairness.
+    </p>
+    <h3>Project Objectives</h3>
+    <ul>
+        <li>Understand CPU scheduling algorithms.</li>
+        <li>Simulate process execution and display a Gantt chart.</li>
+        <li>Calculate completion, turnaround, and waiting times.</li>
+        <li>Compare scheduling results using the same input data.</li>
+    </ul>
+    <div class="note">
+        This simulator implements the main ERRDTQ rules described in the paper:
+        the ready queue is sorted by remaining burst time, the time quantum is
+        recalculated using the paper's rounded 80th-percentile position, and
+        the scheduler checks the one-third-quantum preemption condition when
+        new processes arrive. The paper's percentile indexing is interpreted
+        as one-based, matching its worked example.
+    </div>
+</section>
+
+<section class="card" id="simulator">
+    <h2>Process Scheduling Simulator</h2>
+    <p>Enter one process per row. Arrival time must be non-negative and burst time must be positive.</p>
+
+    <label for="algorithm">Select Algorithm</label>
+    <select id="algorithm" onchange="toggleQuantum()">
+        <option value="FCFS">FCFS</option>
+        <option value="RR">Round Robin</option>
+        <option value="ERRDTQ">Dynamic Quantum Demonstration</option>
+    </select>
+
+    <label for="quantum" id="quantumLabel" style="display:none">
+        Fixed Time Quantum
+        <input type="number" id="quantum" min="1" value="4">
+    </label>
+
+    <div id="cloudScenario" style="display:none;">
+        <div class="note">
+            <b>Real-life scenario: Cloud server task scheduling</b><br>
+            Simulate a cloud server handling incoming API requests, a database query,
+            a report-generation job, and a file-processing task. Arrival time represents
+            when a task reaches the server; burst time is its estimated CPU processing time.
+        </div>
+        <p style="font-size:14px;color:#475569;margin-top:8px;">
+            <b>Task key:</b> API = API request, DB = database query, REPORT = generate report,
+            FILE = process uploaded file. Times are illustrative CPU-time units.
+        </p>
+        <button type="button" class="secondary" onclick="loadCloudExample()">Load Cloud Example</button>
+    </div>
+
+    <label for="processes">Process data (Process ID, Arrival Time, Burst Time)</label>
+    <textarea id="processes" rows="6" style="width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:6px;font-size:15px;">P1,0,5
+P2,1,3
+P3,2,8
+P4,3,6</textarea>
+
+    <br><br>
+    <button onclick="runSimulation()">Run Simulation</button>
+    <button class="secondary" onclick="resetData()">Reset Example</button>
+</section>
+
+<section class="card" id="results">
+    <h2>Simulation Results</h2>
+    <p id="status">Run the simulation to see results.</p>
+
+    <h3>Gantt Chart</h3>
+    <div id="gantt" class="gantt"></div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Process</th>
+                    <th>AT</th>
+                    <th>BT</th>
+                    <th>CT</th>
+                    <th>TAT</th>
+                    <th>WT</th>
+                </tr>
+            </thead>
+            <tbody id="output"></tbody>
+        </table>
+    </div>
+
+    <div class="metrics">
+        <div class="metric">
+            Average Waiting Time
+            <strong id="avgWT">-</strong>
+        </div>
+        <div class="metric">
+            Average Turnaround Time
+            <strong id="avgTAT">-</strong>
+        </div>
+        <div class="metric">
+            CPU Utilization
+            <strong id="cpu">-</strong>
+        </div>
+        <div class="metric">
+            Throughput
+            <strong id="throughput">-</strong>
+        </div>
+    </div>
+</section>
+
+<section class="card" id="comparison">
+    <h2>Algorithm Comparison</h2>
+    <p><b>FCFS:</b> Executes processes in arrival order without preemption.</p>
+    <p><b>Round Robin:</b> Gives each ready process a fixed time quantum and returns unfinished processes to the queue.</p>
+    <p><b>Dynamic Quantum Demonstration (ERRDTQ):</b> Sorts active processes by remaining burst time, recalculates the 80th-percentile quantum at arrival/completion checkpoints, and applies the paper's one-third-quantum preemption rule.</p>
+    <p>
+        Run each algorithm using the same process inputs and compare the
+        waiting time, turnaround time, CPU utilization, and throughput.
+    </p>
+</section>
+
+</div>
+
+<footer>
+    <p>Operating Systems SLA | Process Scheduling Simulator</p>
+    <p>Developed for educational purposes</p>
+</footer>
+
+<script>
+function toggleQuantum() {
+    const alg = document.getElementById("algorithm").value;
+    document.getElementById("quantumLabel").style.display =
+        alg === "RR" ? "block" : "none";
+    document.getElementById("cloudScenario").style.display =
+        alg === "ERRDTQ" ? "block" : "none";
+}
+
+function loadCloudExample() {
+    document.getElementById("processes").value =
+        "API,0,3\nDB,1,8\nREPORT,2,5\nFILE,3,12";
+    document.getElementById("algorithm").value = "ERRDTQ";
+    toggleQuantum();
+}
+
+function resetData() {
+    document.getElementById("processes").value =
+        "P1,0,5\nP2,1,3\nP3,2,8\nP4,3,6";
+    document.getElementById("algorithm").value = "FCFS";
+    document.getElementById("quantum").value = 4;
+    toggleQuantum();
+}
+
+function readProcesses() {
+    const lines = document.getElementById("processes").value
+        .trim().split(/\n/);
+
+    if (!lines[0] || lines.length > 20) {
+        throw new Error("Enter between 1 and 20 processes.");
+    }
+
+    const list = lines.map((line, i) => {
+        const parts = line.split(/[,\s]+/).filter(Boolean);
+
+        if (parts.length !== 3) {
+            throw new Error("Line " + (i + 1) +
+                " must contain ID, arrival time, and burst time.");
+        }
+
+        const at = Number(parts[1]);
+        const bt = Number(parts[2]);
+
+        if (!Number.isInteger(at) || at < 0 ||
+            !Number.isInteger(bt) || bt <= 0) {
+            throw new Error("Arrival time must be non-negative and burst time positive.");
+        }
+
+        return {
+            id: parts[0],
+            at: at,
+            bt: bt,
+            rem: bt,
+            ct: 0,
+            tat: 0,
+            wt: 0,
+            done: false,
+            order: i
+        };
+    });
+
+    if (new Set(list.map(p => p.id)).size !== list.length) {
+        throw new Error("Process IDs must be unique.");
+    }
+
+    return list;
+}
+
+function runFCFS(list) {
+    let time = 0;
+    let gantt = [];
+
+    list.sort((a, b) => a.at - b.at || a.order - b.order);
+
+    list.forEach(p => {
+        if (time < p.at) time = p.at;
+
+        const start = time;
+        time += p.bt;
+        p.ct = time;
+
+        gantt.push({id: p.id, start: start, end: time});
+    });
+
+    return {gantt: gantt, end: time};
+}
+
+function runRoundRobin(list) {
+    let time = 0;
+    let completed = 0;
+    const gantt = [];
+    const queue = [];
+    let next = 0;
+
+    list.sort((a, b) => a.at - b.at || a.order - b.order);
+
+    const fixedQ = Number(document.getElementById("quantum").value);
+    if (!Number.isInteger(fixedQ) || fixedQ <= 0) {
+        throw new Error("Enter a positive whole-number time quantum.");
+    }
+
+    while (completed < list.length) {
+        while (next < list.length && list[next].at <= time) {
+            queue.push(list[next++]);
+        }
+
+        if (queue.length === 0) {
+            time = list[next].at;
+            continue;
+        }
+
+        const p = queue.shift();
+        const start = time;
+        const run = Math.min(p.rem, fixedQ);
+        time += run;
+        p.rem -= run;
+        gantt.push({id: p.id, start: start, end: time});
+
+        while (next < list.length && list[next].at <= time) {
+            queue.push(list[next++]);
+        }
+
+        if (p.rem === 0) {
+            p.ct = time;
+            p.done = true;
+            completed++;
+        } else {
+            queue.push(p);
+        }
+    }
+
+    return {gantt: gantt, end: time};
+}
+
+function runERRDTQ(list) {
+    let time = 0;
+    let completed = 0;
+    const gantt = [];
+    const ready = [];
+    let next = 0;
+    let current = null;
+
+    list.sort((a, b) => a.at - b.at || a.order - b.order);
+
+    function enqueueArrivals() {
+        while (next < list.length && list[next].at <= time) {
+            ready.push(list[next++]);
+        }
+    }
+
+    function sortReady() {
+        ready.sort((a, b) => a.rem - b.rem || a.at - b.at || a.order - b.order);
+    }
+
+    function calculateQuantum() {
+        const active = ready.map(p => p.rem);
+        if (current && current.rem > 0) active.push(current.rem);
+        active.sort((a, b) => a - b);
+        if (active.length === 0) return 1;
+
+        // Paper Algorithm 2: round 0.8 * n to the nearest whole number.
+        // The paper's example uses one-based indexing, so convert to JS indexing.
+        const oneBasedIndex = Math.round(0.8 * active.length);
+        const index = Math.max(1, Math.min(active.length, oneBasedIndex));
+        return active[index - 1];
+    }
+
+    function takeShortestReady() {
+        sortReady();
+        return ready.shift() || null;
+    }
+
+    enqueueArrivals();
+
+    while (completed < list.length) {
+        if (!current) {
+            if (ready.length === 0) {
+                if (next < list.length) {
+                    time = Math.max(time, list[next].at);
+                    enqueueArrivals();
+                }
+                if (ready.length === 0) continue;
+            }
+            current = takeShortestReady();
+        }
+
+        let quantum = calculateQuantum();
+        let sliceEnd = time + Math.min(current.rem, quantum);
+        let interruptedForShorterJob = false;
+
+        while (current && time < sliceEnd) {
+            const nextArrival = next < list.length ? list[next].at : Infinity;
+
+            // Run until the next arrival or the current quantum/completion boundary.
+            if (nextArrival < sliceEnd) {
+                const start = time;
+                const elapsed = nextArrival - time;
+                if (elapsed > 0) {
+                    current.rem -= elapsed;
+                    time = nextArrival;
+                    gantt.push({id: current.id, start: start, end: time});
+                }
+
+                enqueueArrivals();
+                quantum = calculateQuantum();
+                sortReady();
+
+                // ERRDTQ: retain the running process when its remaining BT is
+                // at most one-third of QT; otherwise check the shortest ready job.
+                if (current.rem > 0 && current.rem > quantum / 3 &&
+                    ready.length > 0 && ready[0].rem <= quantum / 3) {
+                    ready.push(current);
+                    current = null;
+                    interruptedForShorterJob = true;
+                    break;
+                }
+
+                // Arrival is a checkpoint: update the quantum and continue using it.
+                sliceEnd = time + Math.min(current.rem, quantum);
+            } else {
+                const start = time;
+                const elapsed = sliceEnd - time;
+                current.rem -= elapsed;
+                time = sliceEnd;
+                if (elapsed > 0) gantt.push({id: current.id, start: start, end: time});
+            }
+        }
+
+        if (interruptedForShorterJob) continue;
+
+        if (current && current.rem <= 0) {
+            current.rem = 0;
+            current.ct = time;
+            current.done = true;
+            completed++;
+            current = null;
+            enqueueArrivals();
+        } else if (current) {
+            // Quantum expired: return the unfinished process to the sorted ready queue.
+            ready.push(current);
+            current = null;
+        }
+    }
+
+    return {gantt: gantt, end: time};
+}
+
+function runSimulation() {
+    try {
+        const list = readProcesses();
+        const alg = document.getElementById("algorithm").value;
+
+        let result;
+
+        if (alg === "FCFS") {
+            result = runFCFS(list);
+        } else if (alg === "RR") {
+            result = runRoundRobin(list);
+        } else {
+            result = runERRDTQ(list);
+        }
+
+        let totalWT = 0;
+        let totalTAT = 0;
+        let busy = 0;
+
+        list.forEach(p => {
+            p.tat = p.ct - p.at;
+            p.wt = p.tat - p.bt;
+            totalWT += p.wt;
+            totalTAT += p.tat;
+            busy += p.bt;
+        });
+
+        document.getElementById("status").textContent =
+            "Completed: " + alg + " | Total processes: " + list.length;
+
+        document.getElementById("output").innerHTML = list
+            .slice().sort((a, b) => a.order - b.order)
+            .map(p => `<tr>
+                <td>${p.id}</td>
+                <td>${p.at}</td>
+                <td>${p.bt}</td>
+                <td>${p.ct}</td>
+                <td>${p.tat}</td>
+                <td>${p.wt}</td>
+            </tr>`).join("");
+
+        document.getElementById("gantt").innerHTML =
+            result.gantt.map(g =>
+                `<div class="block">
+                    ${g.id}
+                    <span>${g.start} - ${g.end}</span>
+                </div>`
+            ).join("");
+
+        document.getElementById("avgWT").textContent =
+            (totalWT / list.length).toFixed(2);
+
+        document.getElementById("avgTAT").textContent =
+            (totalTAT / list.length).toFixed(2);
+
+        document.getElementById("cpu").textContent =
+            result.end > 0 ? (busy / result.end * 100).toFixed(2) + "%" : "0%";
+
+        document.getElementById("throughput").textContent =
+            result.end > 0 ? (list.length / result.end).toFixed(4) : "0";
+
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+toggleQuantum();
+</script>
+
+</body>
+</html>
